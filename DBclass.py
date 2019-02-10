@@ -280,95 +280,96 @@ class MongoDB_class:
 #     test.insertDB(myDict)
     
     #################################### NEEEEEEEEEEEEEEEEEEEEE WWWWWWWWWWWWWWWWWWWWWWWW #####################
-# import numpy as np
+import numpy as np
+test = MongoDB_class("mongodb://localhost:27017/", "dimenReduct", "db_GHCN")
+localname = "GHCND_TXx_1951-2018_RegularGrid_global_2.5x2.5deg_LSmask.nc"
+# # D:\Project\webService\netCDF\GHCN Indics\GHCND_CDD_1951-2018_RegularGrid_global_2.5x2.5deg_LSmask.nc
+obj = xr.open_mfdataset(f'D:/Project/webService/netCDF/GHCN Indics/{localname}')
+print(obj)
+attributes = obj.attrs
+coordinates = obj.coords
+# data = obj.data
 
-# localname = "GHCND_TXx_1951-2018_RegularGrid_global_2.5x2.5deg_LSmask.nc"
-# # # D:\Project\webService\netCDF\GHCN Indics\GHCND_CDD_1951-2018_RegularGrid_global_2.5x2.5deg_LSmask.nc
-# obj = xr.open_mfdataset(f'D:/Project/webService/netCDF/GHCN Indics/{localname}')
-# print(obj)
-# attributes = obj.attrs
-# coordinates = obj.coords
-# # data = obj.data
+dateList = coordinates["time"].values
 
-# dateList = coordinates["time"].values
-
-# dataset_name_short = "GHCN"
-# index_name = "TXx"
-# shor_name = "Max Tmax"
-# unit = "C"
-# type_measure = "temperature"
-# method = "Intensity"
-# i = 0
-# for d in dateList:
-#     # print(datetime.strptime(str(d)[:8],'%Y%m%d'))
-#     tempData = {}
-#     arrayData = ["Ann","Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
-#     tempMonth = {}
+dataset_name_short = "GHCN"
+index_name = "TXx"
+shor_name = "Max Tmax"
+unit = "°C"
+type_measure = "temperature"
+method = "Intensity"
+i = 0
+print(f"Dataset is : {localname}")
+for d in dateList:
+    # print(datetime.strptime(str(d)[:8],'%Y%m%d'))
+    tempData = {}
+    arrayData = ["Ann","Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
+    tempMonth = {}
     
-#     i+=1
-#     data = obj.sel(time=d)
-#     # dataU = data["Ann"].sel()
-#     for temp in arrayData:
-#         tempMonth[temp] = []
-#         for lat in data.coords["lat"].values.tolist():
-#             for lon in data.coords["lon"].values.tolist():
+    
+    data = obj.sel(time=d)
+    # dataU = data["Ann"].sel()
+    for temp in arrayData:
+        tempMonth[temp] = []
+        for lat in data.coords["lat"].values.tolist():
+            for lon in data.coords["lon"].values.tolist():
                 
-#                 # tempData["coor_val"] = {"lat": lat, "lon": lon, "value": data.sel(lat=lat,lon=lon)[temp].values.tolist()}
-#                 # tempMonth[temp].append(tempData["coor_val"])
-#                 # # print(len(tempMonth["Ann"]))
-#                 # break
-#                     # print(data.sel(lat=lat,lon=lon)[temp].values)
-#                     # print(np.isnan(data.sel(lat=lat,lon=lon)[temp].values))
-#                 if(not(np.isnan(data.sel(lat=lat,lon=lon)[temp].values))):
-#                     tempData["coor_val"] = {"lat": lat, "lon": lon, "value": data.sel(lat=lat,lon=lon)[temp].values.tolist()}
-#                     tempMonth[temp].append(tempData["coor_val"])
-#                     # break
-#             # break
-#         # print(temp,tempMonth[temp])
-#         # if(temp == "Jan"):
-#         #     break
-#     myDict = {
-#         "dataset_name_short" : dataset_name_short,
-#             "detail" : {
-#                 "arrayMonth" : arrayData,
-#                 "dataset_name" : localname,
-#                 "author" : attributes["author"],
-#                 "index_name": index_name,
-#                 "shor_name": shor_name,
-#                 "type_measure": type_measure,
-#                 "unit": unit,
-#                 "date": datetime.strptime(str(d)[:8],'%Y%m%d'),
-#                 "method": method,
-#                 "shape": data.dims,
+                # tempData["coor_val"] = {"lat": lat, "lon": lon, "value": data.sel(lat=lat,lon=lon)[temp].values.tolist()}
+                # tempMonth[temp].append(tempData["coor_val"])
+                # # print(len(tempMonth["Ann"]))
+                # break
+                    # print(data.sel(lat=lat,lon=lon)[temp].values)
+                    # print(np.isnan(data.sel(lat=lat,lon=lon)[temp].values))
+                if(not(np.isnan(data.sel(lat=lat,lon=lon)[temp].values))):
+                    tempData["coor_val"] = {"lat": lat, "lon": lon, "value": data.sel(lat=lat,lon=lon)[temp].values.tolist()}
+                    tempMonth[temp].append(tempData["coor_val"])
+                    # break
+            # break
+        # print(temp,tempMonth[temp])
+        # if(temp == "Jan"):
+        #     break
+    myDict = {
+        "dataset_name_short" : dataset_name_short,
+            "detail" : {
+                "arrayMonth" : arrayData,
+                "dataset_name" : localname,
+                "author" : attributes["author"],
+                "index_name": index_name,
+                "shor_name": shor_name,
+                "type_measure": type_measure,
+                "unit": unit,
+                "date": datetime.strptime(str(d)[:8],'%Y%m%d'),
+                "method": method,
+                "shape": data.dims,
 
-#                 # "lat_list": data.coords["lat"].values.tolist(),
-#                 # "lon_list": data.coords["lon"].values.tolist()
+                # "lat_list": data.coords["lat"].values.tolist(),
+                # "lon_list": data.coords["lon"].values.tolist()
 
-#             },
-#         "data" : tempMonth
-#             # "Ann": data["Ann"].values.tolist(),
-#             # "Jan": data["Jan"].values.tolist(),
-#             # "Feb": data["Feb"].values.tolist(),
-#             # "Mar": data["Mar"].values.tolist(),
-#             # "Apr": data["Apr"].values.tolist(),
-#             # "May": data["May"].values.tolist(),
-#             # "Jun": data["Jun"].values.tolist(),
-#             # "Jul": data["Jul"].values.tolist(),
-#             # "Aug": data["Aug"].values.tolist(),
-#             # "Sep": data["Sep"].values.tolist(),
-#             # "Oct": data["Oct"].values.tolist(),
-#             # "Nov": data["Nov"].values.tolist(),
-#             # "Dec": data["Dec"].values.tolist(),
-#         } 
+            },
+        "data" : tempMonth
+            # "Ann": data["Ann"].values.tolist(),
+            # "Jan": data["Jan"].values.tolist(),
+            # "Feb": data["Feb"].values.tolist(),
+            # "Mar": data["Mar"].values.tolist(),
+            # "Apr": data["Apr"].values.tolist(),
+            # "May": data["May"].values.tolist(),
+            # "Jun": data["Jun"].values.tolist(),
+            # "Jul": data["Jul"].values.tolist(),
+            # "Aug": data["Aug"].values.tolist(),
+            # "Sep": data["Sep"].values.tolist(),
+            # "Oct": data["Oct"].values.tolist(),
+            # "Nov": data["Nov"].values.tolist(),
+            # "Dec": data["Dec"].values.tolist(),
+        } 
+    # print(myDict["GHCN"][datetime.strptime(str(d)[:8],'%Y%m%d')]["data"])
+
+    # print("detail",myDict["detail"])
+    # print("data",myDict["data"])
     
-#     # print(myDict["GHCN"][datetime.strptime(str(d)[:8],'%Y%m%d')]["data"])
-
-#     # print("detail",myDict["detail"])
-#     # print("data",myDict["data"])
+    # break
+    print(f"{i} - {test.insertDB(myDict)}")
     
-#     # break
-#     test.insertDB(myDict)
-
+    i+=1
 ######################### AVG TREND ########################
 # print("############### AVG ######################")
 # test = MongoDB_class("mongodb://localhost:27017/", "dimenReduct", "AVG_mapData")
