@@ -318,8 +318,8 @@ def getmap_mapTrend(dataset, year_start, year_stop, index_name):
         unit = data["detail"]["unit"]
         date = data["detail"]["date"]
         method = data["detail"]["method"]
-        shape = data["detail"]["shape"]
-        author = data["detail"]["author"]
+        # shape = data["detail"]["shape"]
+        # author = data["detail"]["author"]
         arrayData = arrayData
 
     dataR.append({
@@ -330,8 +330,8 @@ def getmap_mapTrend(dataset, year_start, year_stop, index_name):
                 "short_name":short_name, 
                 "unit":unit, 
                 "date":date, 
-                "shape":shape, 
-                "author":author, 
+                # "shape":shape, 
+                # "author":author, 
                 "data":data["data"], 
                 "arrayData": arrayData,
                 "type_measure": type_measure,
@@ -646,5 +646,5 @@ def getdata(year, type_data, lat, lon):
 
 
 if __name__ == "__main__" :
-    app.run(host="localhost", port=3200, debug=True)
+    app.run(host= "0.0.0.0", port=3200, debug=True)
     # app.run(host="192.168.1.100", port=3000, debug=True)
