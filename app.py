@@ -646,5 +646,5 @@ def getdata(year, type_data, lat, lon):
 
 
 if __name__ == "__main__" :
-    app.run(host="127.0.0.1", port=3200, debug=True)
+    app.run(host="localhost", port=3200, debug=True)
     # app.run(host="192.168.1.100", port=3000, debug=True)
