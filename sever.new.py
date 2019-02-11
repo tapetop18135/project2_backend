@@ -19,14 +19,14 @@ db = MongoDB_class("mongodb://localhost:27017/", "dimenReduct", "temp1x1")
 
 dbDR = MongoDB_class("mongodb://localhost:27017/", "dimenReduct", "temp_method")
 
-dbRaw = MongoDB_class("mongodb://localhost:27017/", "dimenReduct", "rawdata")
+dbRaw = MongoDB_class("mongodb://localhost:27017/", "climateDB", "db_GHCN")
 
 dbRaw2D = MongoDB_class("mongodb://localhost:27017/", "dimenReduct", "rawdata2Darr")
 
 
-dbMapAVG = MongoDB_class("mongodb://localhost:27017/", "dimenReduct", "AVG_mapData")
+dbMapAVG = MongoDB_class("mongodb://localhost:27017/", "climateDB", "db_avg_Map")
 
-dbMapTrend = MongoDB_class("mongodb://localhost:27017/", "dimenReduct", "Trend_mapData")
+dbMapTrend = MongoDB_class("mongodb://localhost:27017/", "climateDB", "db_trend_Map")
 
 @app.route('/')
 def index():
@@ -191,8 +191,8 @@ def getmap_raw(dataset, year_start, year_stop, index_name):
         unit = data["detail"]["unit"]
         date = data["detail"]["date"]
         method = data["detail"]["method"]
-        shape = data["detail"]["shape"]
-        author = data["detail"]["author"]
+        # shape = data["detail"]["shape"]
+        # author = data["detail"]["author"]
         arrayData = data["detail"]["arrayMonth"]
         # print(np.array(data["Ann"]).tolist())
         # datau = np.nan_to_num(np.array(data["Ann"])).tolist()
@@ -220,15 +220,15 @@ def getmap_raw(dataset, year_start, year_stop, index_name):
                 "short_name":short_name, 
                 "unit":unit, 
                 "date":date, 
-                "shape":shape, 
-                "author":author, 
+                # "shape":shape, 
+                # "author":author, 
                 "data":data["data"], 
                 "arrayData": arrayData,
                 "type_measure": type_measure,
                 }
 
     elapsed_time = time.time() - start_time
-    print(elapsed_time)
+    # print(elapsed_time)
 
     # response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
     # response.headers['Pragma'] = 'no-cache'
@@ -266,8 +266,8 @@ def getmap_mapANG(dataset, year_start, year_stop, index_name):
         unit = data["detail"]["unit"]
         date = data["detail"]["date"]
         method = data["detail"]["method"]
-        shape = data["detail"]["shape"]
-        author = data["detail"]["author"]
+        # shape = data["detail"]["shape"]
+        # author = data["detail"]["author"]
         arrayData = arrayData
 
     dataR.append({
@@ -278,8 +278,8 @@ def getmap_mapANG(dataset, year_start, year_stop, index_name):
                 "short_name":short_name, 
                 "unit":unit, 
                 "date":date, 
-                "shape":shape, 
-                "author":author, 
+                # "shape":shape, 
+                # "author":author, 
                 "data":data["data"], 
                 "arrayData": arrayData,
                 "type_measure": type_measure,

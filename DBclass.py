@@ -73,10 +73,6 @@ class MongoDB_class:
     def queryDBby_indic(self, dataset, dateS, dateE, index_name):
         dateS = datetime.strptime(dateS, '%Y-%m-%d')
         dateE = datetime.strptime(dateE, '%Y-%m-%d')
-        # print("dataset", dataset)
-        # print("dateS", dateS)
-        # print("dateE", dateE)
-        # print("index_name", index_name)
         x = self.mycol.find({
             "$and": [
                 {"dataset_name_short": dataset}, 
@@ -97,7 +93,7 @@ class MongoDB_class:
                 {"dataset_name_short": dataset}, 
                 {"detail.index_name": index_name},
                 {
-                    "detail.date": "1971-01-01_2010-01-01"
+                    "detail.date": year
                     # "detail.date": {$gte : new Date('1951-01-01') , $lte: new Date('1952-01-01')}
                 }, 
                 ] 
