@@ -252,13 +252,78 @@ def getmap_raw(dataset, year_start, year_stop, index_name):
     return response
 
 
-ncPart = "../dataNC/GHCN Indics/" # "./netCDF/GHCN Indics/" # "../dataNc/GHCN Indics/"
+
 
 from netCDF4 import Dataset
+
+@app.route('/api/getmap/mapPCA/<dataset>/<index_name>/')
+def getmap_PCA(dataset, index_name):
+    # diff = year_stop - year_start 
+    ncPart = "../dataNC/ghcndexPCA/" #"./netCDF/ghcndexPCA/"# "../dataNC/GHCN Indics/" # "./netCDF/GHCN Indics/" # "../dataNc/GHCN Indics/"
+
+    if(dataset == "GHCN"):
+        # st = int(year_start[:4]) - 1951  
+        # en = ( int(year_stop[:4]) - 1951 ) + 1 
+        ncin = Dataset(ncPart+f"GHCND_{index_name}_1951-2018_RegularGrid_global_PCA_1951-2017.nc", 'r')
+
+        nCom, nlat, nlon = ncin.variables["temp"].shape
+        tempR = ncin.variables["temp"]
+
+        lat_list = ncin.variables["latitudes"][:]
+        lon_list = ncin.variables["longitudes"][:]
+
+        tempDict = {}
+        for m in range(0,nCom):
+            tempDict["Ann"] = []
+            for lat_i in range(0,nlat):
+                for lon_i in range(0,nlon):
+                    if(np.isnan(tempR[m][lat_i][lon_i])):
+                        pass
+                    else:
+                        tempDict["Ann"].append({"lat": float(lat_list[lat_i]), "lon": float(lon_list[lon_i]), "value": float(tempR[m][lat_i][lon_i])})
+            break
+   
+    dataR = []
+    dataR.append({
+                # "method":method,
+                # "lat_list":lat_list, 
+                # "lon_list":lon_list, 
+                "index_name":index_name, 
+                # "short_name":short_name, 
+                # "unit":unit, 
+                # "date":date, 
+                # "shape":shape, 
+                # "author":author, 
+                "data": tempDict, 
+                # "arrayData": name,
+                "type_map": "dm"
+                # "type_measure": type_measure,
+                })
+
+    dataReal = {
+        "data": dataR,
+        # "size": len(array_date),
+        "date_range": [0]
+    }
+
+    response = app.response_class(
+        response=json.dumps(dataReal, default=json_serial),
+        status=200,
+        mimetype='application/json'
+    )
+    
+    response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+    response.headers["Pragma"] = "no-cache"
+    response.headers["Expires"] = "0"
+    response.headers['Cache-Control'] = 'public, max-age=0'
+
+    return response
+
 
 @app.route('/api/getmap/mapAVG/<dataset>/<year_start>/<year_stop>/<index_name>/')
 def getmap_mapAVG(dataset, year_start, year_stop, index_name):
     # diff = year_stop - year_start 
+    ncPart = "../dataNC/GHCN Indics/" #"./netCDF/GHCN Indics/"# "../dataNC/GHCN Indics/" # "./netCDF/GHCN Indics/" # "../dataNc/GHCN Indics/"
 
     name = ['Ann','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
 
