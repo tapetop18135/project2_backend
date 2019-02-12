@@ -251,38 +251,95 @@ def getmap_raw(dataset, year_start, year_stop, index_name):
 
     return response
 
+
+ncPart = "./netCDF/GHCN Indics/" # "../dataNc/GHCN Indics/"
+
+from netCDF4 import Dataset
+
 @app.route('/api/getmap/mapAVG/<dataset>/<year_start>/<year_stop>/<index_name>/')
-def getmap_mapANG(dataset, year_start, year_stop, index_name):
+def getmap_mapAVG(dataset, year_start, year_stop, index_name):
+    # diff = year_stop - year_start 
+
+    name = ['Ann','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
+
+    if(dataset == "GHCN"):
+        st = int(year_start[:4]) - 1951  
+        en = ( int(year_stop[:4]) - 1951 ) + 1 
+        ncin = Dataset(ncPart+f"GHCND_{index_name}_1951-2018_RegularGrid_global_2.5x2.5deg_LSmask.nc", 'r')
+
+        dicm = {}
+        for i in range(0,len(name)):
+            try:
+                dicm[name[i]] = ncin.variables[name[i]][:]
+            except:
+                break
+        time = ncin.variables["time"][:]
+        
+        print(time[st:en])
+        tempR = []
+        for j in name:
+            try:
+                tempR.append(np.nanmean(dicm[j][st:en], axis=0))
+            except:
+                break
+        print(tempR[0])
+
+        lat_list = ncin.variables["lat"][:]
+        lon_list = ncin.variables["lon"][:]
+        nlat = len(lat_list)
+        nlon = len(lon_list)
+    print(np.amax(tempR[0]))
+    print("RRRRRRRRRRRRRRRRRRREEEEEEEEEEEEEEEEEEEE")
+    print(np.amin(tempR[0]))
+    # print(type(tempR[0][0][0]))
+    # print(tempR[0][0][0])
+    # print(np.ma.is_masked(tempR[0][0][0]))
+    print("----------------------------------------------------------")
+    tempDict = {}
+
+    for m in range(0,len(name)):
+        tempDict[name[m]] = []
+        for lat_i in range(0,nlat):
+            for lon_i in range(0,nlon):
+                if(np.ma.is_masked(tempR[m][lat_i][lon_i])):
+                    pass
+                else:
+                    tempDict[name[m]].append({"lat": float(lat_list[lat_i]), "lon": float(lon_list[lon_i]), "value": float(tempR[m][lat_i][lon_i])})
+
+
     year_r = year_start+"_"+year_stop
     print(year_r)
     dataR = []
 
     arrayData = ["Ann","Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
 
-    for data in dbMapAVG.queryMapDBby_indic(dataset, year_r, index_name):
-        index_name = data["detail"]["index_name"]
-        short_name = data["detail"]["shor_name"]
-        type_measure = data["detail"]["type_measure"]
-        unit = data["detail"]["unit"]
-        date = data["detail"]["date"]
-        method = data["detail"]["method"]
-        # shape = data["detail"]["shape"]
-        # author = data["detail"]["author"]
-        arrayData = arrayData
+    # for data in dbMapAVG.queryMapDBby_indic(dataset, year_r, index_name):
+    #     index_name = data["detail"]["index_name"]
+    #     short_name = data["detail"]["shor_name"]
+    #     type_measure = data["detail"]["type_measure"]
+    #     unit = data["detail"]["unit"]
+    #     date = data["detail"]["date"]
+    #     method = data["detail"]["method"]
+    #     # shape = data["detail"]["shape"]
+    #     # author = data["detail"]["author"]
+    #     arrayData = arrayData
+
+   
 
     dataR.append({
-                "method":method,
+                # "method":method,
                 # "lat_list":lat_list, 
                 # "lon_list":lon_list, 
                 "index_name":index_name, 
-                "short_name":short_name, 
-                "unit":unit, 
-                "date":date, 
+                # "short_name":short_name, 
+                # "unit":unit, 
+                # "date":date, 
                 # "shape":shape, 
                 # "author":author, 
-                "data":data["data"], 
-                "arrayData": arrayData,
-                "type_measure": type_measure,
+                "data": tempDict, 
+                "arrayData": name,
+                "type_map": "avg"
+                # "type_measure": type_measure,
                 })
 
     dataReal = {
