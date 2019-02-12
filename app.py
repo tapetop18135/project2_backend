@@ -252,7 +252,7 @@ def getmap_raw(dataset, year_start, year_stop, index_name):
     return response
 
 
-ncPart = "./netCDF/GHCN Indics/" # "../dataNc/GHCN Indics/"
+ncPart = "../dataNc/GHCN Indics/" # "./netCDF/GHCN Indics/" # "../dataNc/GHCN Indics/"
 
 from netCDF4 import Dataset
 
